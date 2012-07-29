@@ -9,3 +9,6 @@ mm_icon_focus_sd=pkg:/images/terra.png
 mm_icon_side_sd=pkg:/images/terra.png
 screensaver_title=TerraLive
 screensaver_private=1
+splash_screen_hd=pkg:/images/MainMenu_Icon_CenterFocus_HD.png
+splash_screen_sd=pkg:/images/MainMenu_Icon_CenterFocus_SD.png
+splash_color=#ff6600
