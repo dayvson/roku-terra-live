@@ -1,6 +1,6 @@
 '******************************************************************************
 '** Copyright (c) 2012 - Maxwell Dayvson <dayvson@gmail.com>
-'** Copyright (c) 2012 - Marco Lovato <marco.lovato@gmail.com>
+'** Copyright (c) 2012 - Marco Lovato <maglovato@gmail.com>
 '** All rights reserved.
 '** 
 '** Redistribution and use in source and binary forms, with or without
@@ -28,44 +28,7 @@
 '** SUCH DAMAGE.
 '******************************************************************************
 
-Function preShowLiveScreen(breadA=invalid, breadB=invalid) As Object
-    port = CreateObject("roMessagePort")
-    screen = CreateObject("roPosterScreen")
-    screen.SetMessagePort(port)
-    if breadA <> invalid and breadB <> invalid then
-        screen.SetBreadcrumbText(breadA, breadB)
-    end if
-    screen.SetListStyle("arced-landscape")
-    screen.setAdDisplayMode("scale-to-fit")
-    'exit the app gently so that the screen doesn't flash to black
-    screen.showMessage("bbb")
-    'sleep(25)
-    return screen
-End Function
-
-Function showLiveScreen(screen) As Integer
-    itemVenter = { ContentType:"generic"
-           SDPosterUrl:"http://p1.trrsf.com.br/image/get?src=s1.trrsf.com.br/live/thumbs/20120729t100401z_1934_pt.jpg&amp;w=113&amp;h=63"
-           HDPosterUrl:"http://p1.trrsf.com.br/image/get?src=s1.trrsf.com.br/live/thumbs/20120729t100401z_1934_pt.jpg&amp;w=113&amp;h=63"
-           IsHD:False
-           HDBranded:False
-           ShortDescriptionLine1:"ShortDescriptionLine1"
-           ShortDescriptionLine2:"ShortDescriptionLine2"
-           Description:"Vôlei de Praia - Masculino"
-           Categories:["Ao Vivo"]
-           Title:"BRA x AUT"
-           }
-
-    showSpringboardScreen(itemVenter)
-    screen.Show()
-
-    while true
-
-    end while
-    return 0
-End Function
-
-Function showSpringboardScreen(item as object) As Boolean
+Function showLiveScreen(item as object, hasHD as integer, sdURL as string, hdURL as string) As Boolean
     port = CreateObject("roMessagePort")
     screen = CreateObject("roSpringboardScreen")
 
@@ -81,7 +44,9 @@ Function showSpringboardScreen(item as object) As Boolean
                                         ' generic+episode=4x3,
     screen.ClearButtons()
     screen.AddButton(1,"Iniciar Evento em SD")
-    screen.AddButton(2,"Iniciar Evento em HD")
+    if hasHD = 1
+        screen.AddButton(2,"Iniciar Evento em HD")
+    endif
     screen.AddButton(3,"Voltar")
     screen.SetStaticRatingEnabled(false)
     screen.SetPosterStyle("rounded-rect-16x9-generic")
@@ -98,10 +63,14 @@ Function showSpringboardScreen(item as object) As Boolean
                 exit while                
             else if msg.isButtonPressed()
                     print "Button pressed: "; msg.GetIndex(); " " msg.GetData()
+                    if msg.GetIndex() = 1
+                         displayVideo(hasHD, sdURL)
+                    endif
+                    if msg.GetIndex() = 2
+                         displayVideo(hasHD, hdURL)
+                    endif
                     if msg.GetIndex() = 3
                          return true
-                    else 
-                         displayVideo()
                     endif
             else
                 print "Unknown event: "; msg.GetType(); " msg: "; msg.GetMessage()
@@ -115,7 +84,7 @@ Function showSpringboardScreen(item as object) As Boolean
     return true
 End Function
 
-Function displayVideo()
+Function displayVideo(hasHD as integer, theURL as string)
     print "Displaying video: "
     p = CreateObject("roMessagePort")
     video = CreateObject("roVideoScreen")
@@ -126,32 +95,21 @@ Function displayVideo()
     'bitrates  = [664]    ' <800 Kbps = 2 dots
     'bitrates  = [996]    ' <1.1Mbps  = 3 dots
     'bitrates  = [2048]    ' >=1.1Mbps = 4 dots
-    bitrates  = [0]    
+    if hasHD = 1
+        bitrates  = [2000]
+        qualities = ["HD"]
+    else
+        bitrates  = [800]
+        qualities = ["SD"]
+    endif    
 
     'Swap the commented values below to play different video clips...
-    urls = ["http://fs-vdp-cdn17-cis.terra.com/live-mob/1150@1/playlist.m3u8?hash=155eac200abf78c054204c7dae1965af&ts=20120729082143"]
-    qualities = ["HD"]
+    urls = [theURL]
+    'qualities = ["HD"]
     StreamFormat = "hls"
     title = "Vôlei de Praia - Masculino"
 '    srt = "http://dotsub.com/media/f65605d0-c4f6-4f13-a685-c6b96fba03d0/c/eng/srt"
 
-'    urls = ["http://video.ted.com/talks/podcast/DanGilbert_2004_480.mp4"]
-'    qualities = ["HD"]
-'    StreamFormat = "mp4"
-'    title = "Dan Gilbert asks, Why are we happy?"
-
-    ' Apple's HLS test stream
-    'urls = ["http://devimages.apple.com/iphone/samples/bipbop/bipbopall.m3u8"]
-    'qualities = ["SD"]
-    'streamformat = "hls"
-    'title = "Apple BipBop Test Stream"
-
-    ' Big Buck Bunny test stream from Wowza
-    'urls = ["http://ec2-174-129-153-104.compute-1.amazonaws.com:1935/vod/smil:BigBuckBunny.smil/playlist.m3u8"]
-    'qualities = ["SD"]
-    'streamformat = "hls"
-    'title = "Big Buck Bunny"
-    
     videoclip = CreateObject("roAssociativeArray")
     videoclip.StreamBitrates = bitrates
     videoclip.StreamUrls = urls
