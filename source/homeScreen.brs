@@ -40,10 +40,9 @@ Function preShowHomeScreen(breadA=invalid, breadB=invalid) As Object
     
     'exit the app gently so that the screen doesn't flash to black
     screen.showMessage("")
-    sleep(25)
+    'sleep(1)
     return screen
 End Function
-
 
 Function showHomeScreen(screen) As Integer
     video_list = getVideoList()
