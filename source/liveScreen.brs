@@ -28,7 +28,7 @@
 '** SUCH DAMAGE.
 '******************************************************************************
 
-Function showLiveScreen(item as object, hasHD as integer, sdURL as string, hdURL as string) As Boolean
+Function showLiveScreen(liveEvent as object) As Boolean
     port = CreateObject("roMessagePort")
     screen = CreateObject("roSpringboardScreen")
 
@@ -36,15 +36,16 @@ Function showLiveScreen(item as object, hasHD as integer, sdURL as string, hdURL
     
     screen.SetMessagePort(port)
     screen.AllowUpdates(false)
-    if item <> invalid and type(item) = "roAssociativeArray"
-        screen.SetContent(item)
+    if liveEvent <> invalid and type(liveEvent) = "roAssociativeArray"
+        liveEvent.SDPosterUrl = liveEvent.thumb_url
+        liveEvent.HDPosterUrl = liveEvent.thumb_url
+        liveEvent.ContentType = "generic"
+        screen.SetContent(liveEvent)
     endif
-
-    'screen.SetDescriptionStyle("movie") 'audio, movie, video, generic
-                                        ' generic+episode=4x3,
+    
     screen.ClearButtons()
     screen.AddButton(1,"Iniciar Evento em SD")
-    if hasHD = 1
+    if liveEvent.IsHD = true
         screen.AddButton(2,"Iniciar Evento em HD")
     endif
     screen.AddButton(3,"Voltar")
@@ -64,10 +65,10 @@ Function showLiveScreen(item as object, hasHD as integer, sdURL as string, hdURL
             else if msg.isButtonPressed()
                     print "Button pressed: "; msg.GetIndex(); " " msg.GetData()
                     if msg.GetIndex() = 1
-                         displayVideo(hasHD, sdURL)
+                         displayVideo(0, liveEvent.sdURL)
                     endif
                     if msg.GetIndex() = 2
-                         displayVideo(hasHD, hdURL)
+                         displayVideo(1, liveEvent.hdURL)
                     endif
                     if msg.GetIndex() = 3
                          return true
