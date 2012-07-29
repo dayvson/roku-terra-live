@@ -35,8 +35,9 @@ Function preShowHomeScreen(breadA=invalid, breadB=invalid) As Object
     if breadA <> invalid and breadB <> invalid then
         screen.SetBreadcrumbText(breadA, breadB)
     end if
-    screen.SetListStyle("flat-category")
+    screen.SetListStyle("arced-landscape")
     screen.setAdDisplayMode("scale-to-fit")
+    
     'exit the app gently so that the screen doesn't flash to black
     screen.showMessage("")
     sleep(25)
@@ -45,7 +46,10 @@ End Function
 
 
 Function showHomeScreen(screen) As Integer
-    InitAPI()
+    video_list = getVideoList()
+    screen.SetContentList(video_list)
+
+    PrintList(video_list)
     screen.Show()
     while true
     
@@ -53,8 +57,8 @@ Function showHomeScreen(screen) As Integer
     return 0
 End Function
 
-Function InitAPI() As Void
+Function getVideoList() As Object
     conn = LoadContentAPI()    
-    m.VideosList = conn.LoadAPI(conn)
-
+    video_list = conn.LoadAPI(conn)
+    return video_list
 End Function
