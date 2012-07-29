@@ -71,10 +71,12 @@ Function parse_api(xml As Object, videos As Object) As Void
           video.HDPosterURL = validstr(event.CONFIGURATION.THUMB.GetText())
           video.ContentId = validstr(event.CONFIGURATION@ID) 
           video.Title = validstr(event.CONFIGURATION.TITLE.GetText())
-          video.Description = validstr(event.EVENT_DESCRIPTION.GetText())
+          video.Description = validstr(event.COVERAGE.GetText()) + " :: " + validstr(event.CONFIGURATION.DESCRIPTION.GetText())
           video.Country = validstr(event.CONFIGURATION.TITLE.GetText())
           video.UrlSD = validstr(event.CONFIGURATION.LIVETV_HLS_URL.GetText())
           video.UrlHD = validstr(event.CONFIGURATION.LIVETV_HLS_URL.GetText())
+          video.ShortDescriptionLine1 = validstr(event.CONFIGURATION.TITLE.GetText())
+          video.ShortDescriptionLine2 = validstr(event.CONFIGURATION.DESCRIPTION.GetText())
           print video.Title
           videos.Push(video)
           skipEvent:
