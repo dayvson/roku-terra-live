@@ -45,9 +45,16 @@ End Function
 
 
 Function showHomeScreen(screen) As Integer
+    InitAPI()
     screen.Show()
     while true
     
     end while
     return 0
+End Function
+
+Function InitAPI() As Void
+    conn = LoadContentAPI()    
+    m.VideosList = conn.LoadAPI(conn)
+
 End Function
