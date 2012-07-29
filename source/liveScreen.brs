@@ -105,6 +105,7 @@ Function displayVideo(hasHD as integer, theURL as string, eventTitle as String)
     endif    
 
     'Swap the commented values below to play different video clips...
+    '"http://stream-hlg03.terra.com.br/intel5s.mp4",
     urls = [theURL]
     'qualities = ["HD"]
     StreamFormat = "hls"
