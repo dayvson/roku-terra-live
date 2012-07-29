@@ -35,7 +35,7 @@ Function preShowHomeScreen(breadA=invalid, breadB=invalid) As Object
     if breadA <> invalid and breadB <> invalid then
         screen.SetBreadcrumbText(breadA, breadB)
     end if
-    screen.SetListStyle("arced-landscape")
+    screen.SetListStyle("arced-16x9")
     screen.setAdDisplayMode("scale-to-fit")
     
     'exit the app gently so that the screen doesn't flash to black
@@ -52,6 +52,30 @@ Function showHomeScreen(screen) As Integer
     PrintList(video_list)
     screen.Show()
     while true
+
+        msg = wait(0, screen.GetMessagePort())
+        if type(msg) = "roPosterScreenEvent" then
+            print "showHomeScreen | msg = "; msg.GetMessage() " | index = "; msg.GetIndex()
+            if msg.isListFocused() then
+                print "list focused | index = "; msg.GetIndex(); " | category = "; m.curCategory
+            else if msg.isListItemSelected() then
+                print "list item selected | index = "; msg.GetIndex()
+                print video_list[msg.GetIndex()].Title
+
+                liveEvent = {
+                    thumb_url:video_list[msg.GetIndex()].HDPosterURL
+                    IsHD:false
+                    Description:video_list[msg.GetIndex()].Description
+                    Title:video_list[msg.GetIndex()].Title
+                    hdURL:"http://devimages.apple.com/iphone/samples/bipbop/gear1/prog_index.m3u8"
+                    sdURL:video_list[msg.GetIndex()].UrlHD
+                    }
+                showLiveScreen(liveEvent)
+
+            else if msg.isScreenClosed() then
+                return -1
+            end if
+        end If
     
     end while
     return 0
