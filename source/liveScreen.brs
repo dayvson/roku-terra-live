@@ -65,10 +65,10 @@ Function showLiveScreen(liveEvent as object) As Boolean
             else if msg.isButtonPressed()
                     print "Button pressed: "; msg.GetIndex(); " " msg.GetData()
                     if msg.GetIndex() = 1
-                         displayVideo(0, liveEvent.sdURL)
+                         displayVideo(0, liveEvent.sdURL, "Terra Ao Vivo :: "+liveEvent.Title)
                     endif
                     if msg.GetIndex() = 2
-                         displayVideo(1, liveEvent.hdURL)
+                         displayVideo(1, liveEvent.hdURL, "Terra Ao Vivo :: "+liveEvent.Title)
                     endif
                     if msg.GetIndex() = 3
                          return true
@@ -85,7 +85,7 @@ Function showLiveScreen(liveEvent as object) As Boolean
     return true
 End Function
 
-Function displayVideo(hasHD as integer, theURL as string)
+Function displayVideo(hasHD as integer, theURL as string, eventTitle as String)
     print "Displaying video: "
     p = CreateObject("roMessagePort")
     video = CreateObject("roVideoScreen")
@@ -108,7 +108,7 @@ Function displayVideo(hasHD as integer, theURL as string)
     urls = [theURL]
     'qualities = ["HD"]
     StreamFormat = "hls"
-    title = "Vôlei de Praia - Masculino"
+    title = eventTitle
 '    srt = "http://dotsub.com/media/f65605d0-c4f6-4f13-a685-c6b96fba03d0/c/eng/srt"
 
     videoclip = CreateObject("roAssociativeArray")
