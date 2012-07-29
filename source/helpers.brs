@@ -343,7 +343,15 @@ Function GetXMLElementBodiesByName(xml As Object, name As String) As Object
     return list
 End Function
 
-
+Function GetElementsByTagName(items As Object, name As String) As Object
+    list = CreateObject("roArray", 100, true)
+    for each item in items
+        if item.GetName() = name then
+            list.Push(item)
+        endif
+    next
+    return list
+End Function
 '******************************************************
 'Get first XML subelement by name
 '
