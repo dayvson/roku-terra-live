@@ -2,7 +2,6 @@
 '** Copyright (c) 2012 - Maxwell Dayvson <dayvson@gmail.com>
 '** Copyright (c) 2012 - Marco Lovato <maglovato@gmail.com>
 '** All rights reserved.
-'** 
 '** Redistribution and use in source and binary forms, with or without
 '** modification, are permitted provided that the following conditions
 '** are met:
@@ -14,7 +13,6 @@
 '** 3. Neither the name of the University nor the names of its contributors
 '**    may be used to endorse or promote products derived from this software
 '**    without specific prior written permission.
-'** 
 '** THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
 '** ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 '** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -46,7 +44,7 @@ Function load_api(conn As Object) As Dynamic
     m.Timer.Mark()
     rsp = http.GetToStringWithRetry()
     videos = newVideos()
-   
+
     xml = ParseXML(rsp)
     if xml=invalid then
         print "Can't parse feed"
@@ -89,17 +87,17 @@ End Function
 Function parse_api(xml As Object, videos As Object) As Void
     groups = xml.GetChildElements()[1].GetChildElements()[0].GetChildElements()[1]
     group_list = GetXMLElementsByName(groups, "GROUP")
-    for each item in group_list        
+    for each item in group_list
         events = item.CONTENT.GetChildElements()
         for each event in events
           if event.STATUS.GetText() <> "2" then
             goto skipEvent
-          endif 
+          endif
           video = newVideo()
           video.type = "normal"
-          video.SDPosterURL = validstr(event.CONFIGURATION.THUMB.GetText()) 
+          video.SDPosterURL = validstr(event.CONFIGURATION.THUMB.GetText())
           video.HDPosterURL = validstr(event.CONFIGURATION.THUMB.GetText())
-          video.ContentId = validstr(event.CONFIGURATION@ID) 
+          video.ContentId = validstr(event.CONFIGURATION@ID)
           video.Title = validstr(event.CONFIGURATION.TITLE.GetText())
           video.Description = validstr(event.COVERAGE.GetText()) + " :: " + validstr(event.CONFIGURATION.DESCRIPTION.GetText())
           video.Country = validstr(event.CONFIGURATION.TITLE.GetText())
