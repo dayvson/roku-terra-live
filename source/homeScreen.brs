@@ -1,6 +1,6 @@
 '******************************************************************************
 '** Copyright (c) 2012 - Maxwell Dayvson <dayvson@gmail.com>
-'** Copyright (c) 2012 - Marco Lovato <marco.lovato@gmail.com>
+'** Copyright (c) 2012 - Marco Lovato <maglovato@gmail.com>
 '** All rights reserved.
 '** 
 '** Redistribution and use in source and binary forms, with or without
