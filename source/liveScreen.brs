@@ -32,21 +32,40 @@ Function showLiveScreen(liveEvent as object) As Boolean
     port = CreateObject("roMessagePort")
     screen = CreateObject("roSpringboardScreen")
 
+    preroll = {
+        streamFormat: "mp4"
+        stream: {
+          url:  "http://stream-hlg03.terra.com.br/intel5s.mp4"
+        }
+      }
+
+    content ={
+        title:        liveEvent.Title
+        sdPosterURL:  liveEvent.thumb_url
+        hdPosterURL:  liveEvent.thumb_url
+        description:  liveEvent.Description
+        contentType:  "generic"
+        streamFormat: "hls"
+        stream: {
+          url:  liveEvent.sdURL
+        }
+      }
+  
     print "showSpringboardScreen"
     
     screen.SetMessagePort(port)
     screen.AllowUpdates(false)
-    if liveEvent <> invalid and type(liveEvent) = "roAssociativeArray"
-        liveEvent.SDPosterUrl = liveEvent.thumb_url
-        liveEvent.HDPosterUrl = liveEvent.thumb_url
-        liveEvent.ContentType = "generic"
-        screen.SetContent(liveEvent)
-    endif
+'    if liveEvent <> invalid and type(liveEvent) = "roAssociativeArray"
+'        liveEvent.SDPosterUrl = liveEvent.thumb_url
+'        liveEvent.HDPosterUrl = liveEvent.thumb_url
+'        liveEvent.ContentType = "generic"
+    screen.SetContent(content)
+'    endif
     
     screen.ClearButtons()
-    screen.AddButton(1,"Iniciar Evento em SD")
+    screen.AddButton(1,"Assistir")
     if liveEvent.IsHD = true
-        screen.AddButton(2,"Iniciar Evento em HD")
+        screen.AddButton(2,"Assistir em HD")
     endif
     screen.AddButton(3,"Voltar")
     screen.SetStaticRatingEnabled(false)
@@ -65,10 +84,19 @@ Function showLiveScreen(liveEvent as object) As Boolean
             else if msg.isButtonPressed()
                     print "Button pressed: "; msg.GetIndex(); " " msg.GetData()
                     if msg.GetIndex() = 1
-                         displayVideo(0, liveEvent.sdURL, "Terra Ao Vivo :: "+liveEvent.Title)
+                        canvas = CreateObject("roImageCanvas")
+                        canvas.SetLayer(0, "#000000")
+                        canvas.Show()
+                        if ShowPreroll(preroll)
+                            ShowVideoScreen(content)
+                            'displayVideo(0, liveEvent.sdURL, "hls", "Terra Ao Vivo :: "+liveEvent.Title)
+                        end if
+                        canvas.Close()
                     endif
                     if msg.GetIndex() = 2
-                         displayVideo(1, liveEvent.hdURL, "Terra Ao Vivo :: "+liveEvent.Title)
+                        if ShowPreroll(preroll)
+                            displayVideo(1, liveEvent.hdURL, "hls", "Terra Ao Vivo :: "+liveEvent.Title)
+                        end if
                     endif
                     if msg.GetIndex() = 3
                          return true
@@ -85,10 +113,104 @@ Function showLiveScreen(liveEvent as object) As Boolean
     return true
 End Function
 
-Function displayVideo(hasHD as integer, theURL as string, eventTitle as String)
+sub ShowVideoScreen(video)
+  port = CreateObject("roMessagePort")
+  screen = CreateObject("roVideoScreen")
+  screen.SetMessagePort(port)
+  screen.SetContent(video)
+
+  screen.Show()
+
+  while true
+    msg = wait(0, port)
+
+    if type(msg) = "roVideoScreenEvent"
+      if msg.isScreenClosed()
+        exit while
+      end if
+    end if
+  end while
+
+  screen.Close()
+end sub
+
+function ShowPreRoll(video)
+  ' a true result indicates that playback finished without user intervention
+  ' a false result indicates that the user pressed UP or BACK to terminate playback
+  result = true
+  canvas = CreateObject("roImageCanvas")
+  player = CreateObject("roVideoPlayer")
+  port = CreateObject("roMessagePort")
+
+  canvas.SetMessagePort(port)
+  ' build a very simple buffer screen for our preroll video
+  'canvas.SetLayer(0, { text: "Aguarde a palavra de nossos patrocinadores" })
+  'canvas.Show()
+
+  ' be sure to use the same message port for both the canvas and the player
+  ' so we can receive events from both
+  player.SetMessagePort(port)
+  player.SetDestinationRect(canvas.GetCanvasRect())
+  player.AddContent(video)
+
+  player.Play()
+
+  ' start our event loop
+  while true
+    ' wait for an event
+    msg = wait(0, canvas.GetMessagePort())
+
+    if type(msg) = "roVideoPlayerEvent"
+      if msg.isFullResult()
+        ' the video played to the end without user intervention
+        exit while
+'      else if isRequestFailed()
+'        ' something went wrong with playback, but the user did not intervene
+'        exit while
+      else if msg.isStatusMessage()
+        if msg.GetMessage() = "start of play"
+          ' once the video starts, clear out the canvas so it doesn't cover the video
+          canvas.SetLayer(0, { color: "#00000000", CompositionMode: "Source" })
+          canvas.Show()
+        end if
+      end if
+    else if type(msg) = "roImageCanvasEvent"
+      if msg.isRemoteKeyPressed()
+        index = msg.GetIndex()
+        if index = 0 or index = 2
+          ' the user pressed UP or BACK to terminate playback
+          result = false
+          exit while
+        end if
+      end if
+    end if
+  end while
+
+  player.Stop()
+  canvas.Close()
+
+  return result
+end function
+
+'------------------------------------------------------------------------------------------------------------
+'------------------------------------------------------------------------------------------------------------
+'--------------------- TRASH --------------------------------------------------------------------------------
+'------------------------------------------------------------------------------------------------------------
+'------------------------------------------------------------------------------------------------------------
+
+Function displayVideo(hasHD as integer, theURL as string, stream as string, eventTitle as String)
+    
+    result = true
+    
     print "Displaying video: "
     p = CreateObject("roMessagePort")
     video = CreateObject("roVideoScreen")
+    'canvas = CreateObject("roImageCanvas")
+    
+    'canvas.SetMessagePort(port)
+    'canvas.SetLayer(0, { text: "Aguarde a palavra de nossos patrocinadores" })
+    'canvas.Show()
+  
     video.setMessagePort(p)
 
     'bitrates  = [0]          ' 0 = no dots, adaptive bitrate
@@ -108,7 +230,7 @@ Function displayVideo(hasHD as integer, theURL as string, eventTitle as String)
     '"http://stream-hlg03.terra.com.br/intel5s.mp4",
     urls = [theURL]
     'qualities = ["HD"]
-    StreamFormat = "hls"
+    StreamFormat = stream
     title = eventTitle
 '    srt = "http://dotsub.com/media/f65605d0-c4f6-4f13-a685-c6b96fba03d0/c/eng/srt"
 
