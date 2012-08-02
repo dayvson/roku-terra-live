@@ -41,12 +41,13 @@ End Function
 Function initTheme() as void
     app = CreateObject("roAppManager")
     theme = CreateObject("roAssociativeArray")
-    theme.OverhangOffsetSD_X =  "40"
-    theme.OverhangOffsetSD_Y = "60"
-    theme.OverhangSliceSD = "pkg:/images/Overhang_Background_SD.png"
-    theme.OverhangOffsetHD_X = "100"
-    theme.OverhangOffsetHD_Y = "55"
-    theme.OverhangSliceHD = "pkg:/images/Overhang_Background_HD.png"
+    theme.OverhangPrimaryLogoOffsetSD_X = "0"
+    theme.OverhangPrimaryLogoOffsetSD_Y = "0"
+    theme.OverhangPrimaryLogoSD = "pkg:/images/Overhang_Background_SD.png"
+    theme.OverhangPrimaryLogoOffsetHD_X = "32"
+    'theme.OverhangPrimaryLogoOffsetHD_X = "34"
+    theme.OverhangPrimaryLogoOffsetHD_Y = "18"
+    theme.OverhangPrimaryLogoHD = "pkg:/images/Overhang_Background_HD.png"
     app.SetTheme(theme)
 End Function
 
