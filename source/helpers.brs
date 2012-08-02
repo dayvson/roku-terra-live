@@ -29,9 +29,6 @@
 '******************************************************************************
 
 
-'******************************************************
-'Registry Helper Functions
-'******************************************************
 Function RegRead(key, section=invalid)
     if section = invalid then section = "Default"
     sec = CreateObject("roRegistrySection", section)
@@ -54,10 +51,6 @@ Function RegDelete(key, section=invalid)
 End Function
 
 
-'******************************************************
-'Insertion Sort
-'Will sort an array directly, or use a key function
-'******************************************************
 Sub Sort(A as Object, key=invalid as dynamic)
 
     if type(A)<>"roArray" then return

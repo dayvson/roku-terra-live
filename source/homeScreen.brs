@@ -47,11 +47,8 @@ End Function
 Function showHomeScreen(screen) As Integer
     video_list = getVideoList()
     screen.SetContentList(video_list)
-
-    PrintList(video_list)
     screen.Show()
     while true
-
         msg = wait(0, screen.GetMessagePort())
         if type(msg) = "roPosterScreenEvent" then
             print "showHomeScreen | msg = "; msg.GetMessage() " | index = "; msg.GetIndex()
@@ -60,7 +57,6 @@ Function showHomeScreen(screen) As Integer
             else if msg.isListItemSelected() then
                 print "list item selected | index = "; msg.GetIndex()
                 print video_list[msg.GetIndex()].Title
-
                 liveEvent = {
                     thumb_url:video_list[msg.GetIndex()].HDPosterURL
                     IsHD:false
@@ -70,12 +66,10 @@ Function showHomeScreen(screen) As Integer
                     sdURL:video_list[msg.GetIndex()].UrlHD
                     }
                 showLiveScreen(liveEvent)
-
             else if msg.isScreenClosed() then
                 return -1
             end if
         end If
-    
     end while
     return 0
 End Function

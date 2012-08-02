@@ -55,13 +55,6 @@ Function showLiveScreen(liveEvent as object) As Boolean
     
     screen.SetMessagePort(port)
     screen.AllowUpdates(false)
-'    if liveEvent <> invalid and type(liveEvent) = "roAssociativeArray"
-'        liveEvent.SDPosterUrl = liveEvent.thumb_url
-'        liveEvent.HDPosterUrl = liveEvent.thumb_url
-'        liveEvent.ContentType = "generic"
-    screen.SetContent(content)
-'    endif
-    
     screen.ClearButtons()
     screen.AddButton(1,"Assistir")
     if liveEvent.IsHD = true
@@ -108,8 +101,6 @@ Function showLiveScreen(liveEvent as object) As Boolean
             print "wrong type.... type=";msg.GetType(); " msg: "; msg.GetMessage()
         endif
     end while
-
-
     return true
 End Function
 
@@ -118,12 +109,9 @@ sub ShowVideoScreen(video)
   screen = CreateObject("roVideoScreen")
   screen.SetMessagePort(port)
   screen.SetContent(video)
-
   screen.Show()
-
   while true
     msg = wait(0, port)
-
     if type(msg) = "roVideoScreenEvent"
       if msg.isScreenClosed()
         exit while
@@ -152,21 +140,13 @@ function ShowPreRoll(video)
   player.SetMessagePort(port)
   player.SetDestinationRect(canvas.GetCanvasRect())
   player.AddContent(video)
-
   player.Play()
-
-  ' start our event loop
   while true
-    ' wait for an event
     msg = wait(0, canvas.GetMessagePort())
-
     if type(msg) = "roVideoPlayerEvent"
       if msg.isFullResult()
         ' the video played to the end without user intervention
         exit while
-'      else if isRequestFailed()
-'        ' something went wrong with playback, but the user did not intervene
-'        exit while
       else if msg.isStatusMessage()
         if msg.GetMessage() = "start of play"
           ' once the video starts, clear out the canvas so it doesn't cover the video
@@ -192,11 +172,6 @@ function ShowPreRoll(video)
   return result
 end function
 
-'------------------------------------------------------------------------------------------------------------
-'------------------------------------------------------------------------------------------------------------
-'--------------------- TRASH --------------------------------------------------------------------------------
-'------------------------------------------------------------------------------------------------------------
-'------------------------------------------------------------------------------------------------------------
 
 Function displayVideo(hasHD as integer, theURL as string, stream as string, eventTitle as String)
     
@@ -205,19 +180,9 @@ Function displayVideo(hasHD as integer, theURL as string, stream as string, even
     print "Displaying video: "
     p = CreateObject("roMessagePort")
     video = CreateObject("roVideoScreen")
-    'canvas = CreateObject("roImageCanvas")
-    
-    'canvas.SetMessagePort(port)
-    'canvas.SetLayer(0, { text: "Aguarde a palavra de nossos patrocinadores" })
-    'canvas.Show()
   
     video.setMessagePort(p)
 
-    'bitrates  = [0]          ' 0 = no dots, adaptive bitrate
-    'bitrates  = [348]    ' <500 Kbps = 1 dot
-    'bitrates  = [664]    ' <800 Kbps = 2 dots
-    'bitrates  = [996]    ' <1.1Mbps  = 3 dots
-    'bitrates  = [2048]    ' >=1.1Mbps = 4 dots
     if hasHD = 1
         bitrates  = [2000]
         qualities = ["HD"]
@@ -225,26 +190,16 @@ Function displayVideo(hasHD as integer, theURL as string, stream as string, even
         bitrates  = [800]
         qualities = ["SD"]
     endif    
-
-    'Swap the commented values below to play different video clips...
-    '"http://stream-hlg03.terra.com.br/intel5s.mp4",
     urls = [theURL]
-    'qualities = ["HD"]
     StreamFormat = stream
     title = eventTitle
-'    srt = "http://dotsub.com/media/f65605d0-c4f6-4f13-a685-c6b96fba03d0/c/eng/srt"
-
     videoclip = CreateObject("roAssociativeArray")
     videoclip.StreamBitrates = bitrates
     videoclip.StreamUrls = urls
     videoclip.StreamQualities = qualities
     videoclip.StreamFormat = streamformat
     videoclip.Title = title
-    'print "srt = ";srt
-    'if srt <> invalid and srt <> "" then
-    '    videoclip.SubtitleUrl = srt
-    'end if
-    
+
     video.SetContent(videoclip)
     video.show()
 

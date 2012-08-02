@@ -37,14 +37,12 @@ Function LoadContentAPI() As Object
     return conn
 End Function
 
-
 Function load_api(conn As Object) As Dynamic
     print "url: " + conn.urlAPI
     http = NewHttp(conn.urlAPI)
     m.Timer.Mark()
     rsp = http.GetToStringWithRetry()
     videos = newVideos()
-
     xml = ParseXML(rsp)
     if xml=invalid then
         print "Can't parse feed"
@@ -67,20 +65,20 @@ End Function
 
 Function newVideo() As Object
     video = CreateObject("roAssociativeArray")
-    video.ContentId        = ""
-    video.Title            = ""
-    video.ContentType      = ""
-    video.ContentQuality   = ""
-    video.Country          = ""
-    video.UrlSD            = ""
-    video.UrlHD            = ""
+    video.ContentId       = ""
+    video.Title           = ""
+    video.ContentType     = ""
+    video.ContentQuality  = ""
+    video.Country         = ""
+    video.UrlSD           = ""
+    video.UrlHD           = ""
     video.ThumbSD         = ""
     video.ThumbHD         = ""
-    video.SDPosterURL = ""
-    video.HDPosterURL = ""
-    video.StarRating = "95"
-    video.HDBranded = false
-    video.isHD = false
+    video.SDPosterURL     = ""
+    video.HDPosterURL     = ""
+    video.StarRating      = "95"
+    video.HDBranded       = false
+    video.isHD            = false
     return video
 End Function
 
@@ -110,7 +108,6 @@ Function parse_api(xml As Object, videos As Object) As Void
           skipEvent:
             print "skipped event"
         next event
-
         skipitem:
             print "skipped item"
     next
