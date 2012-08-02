@@ -65,20 +65,22 @@ End Function
 
 Function newVideo() As Object
     video = CreateObject("roAssociativeArray")
-    video.ContentId       = ""
-    video.Title           = ""
-    video.ContentType     = ""
-    video.ContentQuality  = ""
-    video.Country         = ""
-    video.UrlSD           = ""
-    video.UrlHD           = ""
-    video.ThumbSD         = ""
-    video.ThumbHD         = ""
-    video.SDPosterURL     = ""
-    video.HDPosterURL     = ""
-    video.StarRating      = "95"
-    video.HDBranded       = false
-    video.isHD            = false
+    video = {
+      ContentId:""
+      Title:""
+      ContentType:""
+      ContentQuality:""
+      Country:""
+      UrlSD:""
+      UrlHD:""
+      ThumbSD:""
+      ThumbHD:""
+      SDPosterURL:""
+      HDPosterURL:""
+      StarRating:"95"
+      HDBranded:false
+      isHD:false
+    }
     return video
 End Function
 
