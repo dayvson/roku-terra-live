@@ -70,9 +70,11 @@ Function CreateVideoItemByEvent(event As Object) As Object
     video.title = event.CONFIGURATION.TITLE.GetText()
     video.description = event.COVERAGE.GetText() + " :: " + event.CONFIGURATION.DESCRIPTION.GetText()
     video.country = event.CONFIGURATION.TITLE.GetText()
+    video.streamFormat = "hls"
     video.stream = {
        url: event.CONFIGURATION.LIVETV_HLS_URL.GetText()
     }
+    video.contentType = "generic"
     video.shortDescriptionLine1 = event.CONFIGURATION.TITLE.GetText()
     video.shortDescriptionLine2 = event.CONFIGURATION.DESCRIPTION.GetText()
     return video
