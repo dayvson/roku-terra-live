@@ -48,7 +48,7 @@ PKGREL = ../packages
 ZIPREL = ../zips
 SOURCEREL = ..
 ZIP_EXCLUDE = \*.swp \*~ \*\.~ LICENSE .gitignore Makefile README.md \*.git/\* \*.odp
-ROKU_DEV_TARGET = 192.168.1.101
+#ROKU_DEV_TARGET = 192.168.1.101
 .PHONY: all $(APPNAME)
 
 $(APPNAME): 

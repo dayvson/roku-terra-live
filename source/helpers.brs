@@ -69,6 +69,18 @@ Function isint(obj as dynamic) As Boolean
     return true
 End Function
 
+Function isnonemptystr(obj)
+    if isnullorempty(obj) return false
+    return true
+End Function
+
+Function isnullorempty(obj)
+    if obj = invalid return true
+    if not isstr(obj) return true
+    if Len(obj) = 0 return true
+    return false
+End Function
+
 Function validstr(obj As Dynamic) As String
     if isnonemptystr(obj) return obj
     return ""
