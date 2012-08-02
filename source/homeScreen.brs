@@ -2,7 +2,7 @@
 '** Copyright (c) 2012 - Maxwell Dayvson <dayvson@gmail.com>
 '** Copyright (c) 2012 - Marco Lovato <maglovato@gmail.com>
 '** All rights reserved.
-'** 
+'**
 '** Redistribution and use in source and binary forms, with or without
 '** modification, are permitted provided that the following conditions
 '** are met:
@@ -14,7 +14,7 @@
 '** 3. Neither the name of the University nor the names of its contributors
 '**    may be used to endorse or promote products derived from this software
 '**    without specific prior written permission.
-'** 
+'**
 '** THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
 '** ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 '** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -54,15 +54,7 @@ Function showHomeScreen(screen) As Integer
             else if msg.isListItemSelected() then
                 print "list item selected | index = "; msg.GetIndex()
                 print video_list[msg.GetIndex()].Title
-                liveEvent = {
-                    thumb_url:video_list[msg.GetIndex()].HDPosterURL
-                    IsHD:false
-                    Description:video_list[msg.GetIndex()].Description
-                    Title:video_list[msg.GetIndex()].Title
-                    hdURL:"http://devimages.apple.com/iphone/samples/bipbop/gear1/prog_index.m3u8"
-                    sdURL:video_list[msg.GetIndex()].UrlHD
-                }
-                showLiveScreen(liveEvent)
+                showLiveScreen(video_list[msg.GetIndex()])
             else if msg.isScreenClosed() then
                 return -1
             end if
@@ -72,7 +64,7 @@ Function showHomeScreen(screen) As Integer
 End Function
 
 Function getVideoList() As Object
-    conn = LoadContentAPI()    
+    conn = LoadContentAPI()
     video_list = conn.LoadAPI(conn)
     return video_list
 End Function
