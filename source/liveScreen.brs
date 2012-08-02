@@ -31,14 +31,12 @@
 Function showLiveScreen(liveEvent as object) As Boolean
     port = CreateObject("roMessagePort")
     screen = CreateObject("roSpringboardScreen")
-
     preroll = {
         streamFormat: "mp4"
         stream: {
           url:  "http://stream-hlg03.terra.com.br/intel5s.mp4"
         }
-      }
-
+    }
     content ={
         title:        liveEvent.Title
         sdPosterURL:  liveEvent.thumb_url
@@ -49,10 +47,7 @@ Function showLiveScreen(liveEvent as object) As Boolean
         stream: {
           url:  liveEvent.sdURL
         }
-      }
-  
-    print "showSpringboardScreen"
-    
+    }
     screen.SetMessagePort(port)
     screen.AllowUpdates(false)
     screen.ClearButtons()
@@ -65,7 +60,6 @@ Function showLiveScreen(liveEvent as object) As Boolean
     screen.SetPosterStyle("rounded-rect-16x9-generic")
     screen.AllowUpdates(true)
     screen.Show()
-
     downKey=3
     selectKey=6
     while true
@@ -82,7 +76,6 @@ Function showLiveScreen(liveEvent as object) As Boolean
                         canvas.Show()
                         if ShowPreroll(preroll)
                             ShowVideoScreen(content)
-                            'displayVideo(0, liveEvent.sdURL, "hls", "Terra Ao Vivo :: "+liveEvent.Title)
                         end if
                         canvas.Close()
                     endif
@@ -118,7 +111,6 @@ sub ShowVideoScreen(video)
       end if
     end if
   end while
-
   screen.Close()
 end sub
 
@@ -165,22 +157,17 @@ function ShowPreRoll(video)
       end if
     end if
   end while
-
   player.Stop()
   canvas.Close()
-
   return result
 end function
 
 
 Function displayVideo(hasHD as integer, theURL as string, stream as string, eventTitle as String)
-    
     result = true
-    
     print "Displaying video: "
     p = CreateObject("roMessagePort")
     video = CreateObject("roVideoScreen")
-  
     video.setMessagePort(p)
 
     if hasHD = 1

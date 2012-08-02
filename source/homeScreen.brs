@@ -37,10 +37,7 @@ Function preShowHomeScreen(breadA=invalid, breadB=invalid) As Object
     end if
     screen.SetListStyle("arced-16x9")
     screen.setAdDisplayMode("scale-to-fit")
-    
-    'exit the app gently so that the screen doesn't flash to black
     screen.showMessage("")
-    'sleep(1)
     return screen
 End Function
 
@@ -64,7 +61,7 @@ Function showHomeScreen(screen) As Integer
                     Title:video_list[msg.GetIndex()].Title
                     hdURL:"http://devimages.apple.com/iphone/samples/bipbop/gear1/prog_index.m3u8"
                     sdURL:video_list[msg.GetIndex()].UrlHD
-                    }
+                }
                 showLiveScreen(liveEvent)
             else if msg.isScreenClosed() then
                 return -1

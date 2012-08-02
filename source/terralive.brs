@@ -28,7 +28,7 @@
 '** SUCH DAMAGE.
 '******************************************************************************
 
-Sub Main()
+Function Main() as void
     initTheme()
     screen = preShowHomeScreen("", "")
     if screen=invalid then
@@ -36,19 +36,21 @@ Sub Main()
         return
     end if
     showHomeScreen(screen)
-End Sub
+End Function
 
-Sub initTheme()
+Function initTheme() as void
     app = CreateObject("roAppManager")
     theme = CreateObject("roAssociativeArray")
-    theme.OverhangOffsetSD_X = "31"
-    theme.OverhangOffsetSD_Y = "31"
-    theme.OverhangSliceSD = "pkg:/images/Overhang_Background_SD.png"
-    theme.OverhangLogoSD  = "pkg:/images/Overhang_Logo_SD.png"
-    theme.OverhangOffsetHD_X = "35"
-    theme.OverhangOffsetHD_Y = "35"
-    theme.OverhangSliceHD = "pkg:/images/Overhang_Background_HD.png"
-    theme.OverhangLogoHD  = "pkg:/images/Overhang_Logo_HD.png"
+    theme = {
+      OverhangOffsetSD_X: "31"
+      OverhangOffsetSD_Y: "31"
+      OverhangSliceSD: "pkg:/images/Overhang_Background_SD.png"
+      OverhangLogoSD: "pkg:/images/Overhang_Logo_SD.png"
+      OverhangOffsetHD_X: "35"
+      OverhangOffsetHD_Y: "35"
+      OverhangSliceHD: "pkg:/images/Overhang_Background_HD.png"
+      OverhangLogoHD: "pkg:/images/Overhang_Logo_HD.png"
+    }
     app.SetTheme(theme)
-End Sub
+End Function
 
