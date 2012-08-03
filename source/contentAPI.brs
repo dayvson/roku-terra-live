@@ -26,43 +26,49 @@
 '** SUCH DAMAGE.
 '******************************************************************************
 
-Function LoadContentAPI() As Object
+function LoadContentAPI() As Object
     conn = CreateObject("roAssociativeArray")
     conn.urlAPI  = "http://p1.trrsf.com.br/contentAPI/get?prd=live_guadalajara&srv=getListTickerElements&navigation_code=home&country_code=br&contentType=xml&status=2&eventType=1"
-    conn.Timer = CreateObject("roTimespan")
     conn.LoadAPI    = load_api
-    conn.ParseAPI   = parse_api
+    conn.GetEvents   = getEvents
     print "created api connection for " + conn.urlAPI
     return conn
-End Function
+end function
 
-Function load_api(conn As Object) As Dynamic
-    print "url: " + conn.urlAPI
-    http = NewHttp(conn.urlAPI)
-    m.Timer.Mark()
-    rsp = http.GetToStringWithRetry()
-    videos = VideoList()
-    xml = ParseXML(rsp)
-    if xml=invalid then
-        print "Can't parse feed"
-        return videos
+function load_api(conn As Object) As Dynamic
+    loader = URLLoader(conn.urlAPI)
+    data = loader.ReadDataWithRetry()
+    xml = ParseXML(data)
+    if xml=invalid or islist(xml.GetBody()) = false then
+        print "No videos found"
+        return VideoList()
     endif
-    if islist(xml.GetBody()) = false then
-        print "no video found"
-        return videos
-    endif
-    m.Timer.Mark()
-    m.ParseAPI(xml, videos)
-    print "Show API Parse Took : " + itostr(m.Timer.TotalMilliseconds())
+    videos = m.GetEvents(xml)
     return videos
-End Function
+end function
 
-Function VideoList() As Object
+function VideoList() As Object
     videos = CreateObject("roArray", 100, true)
     return videos
-End Function
+end Function
 
-Function CreateVideoItemByEvent(event As Object) As Object
+function getEvents(xml As Object) As Object
+    videos = VideoList()
+    groups = xml.GetChildElements()[1].GetChildElements()[0].GetChildElements()[1]
+    group_list = GetXMLElementsByName(groups, "GROUP")
+    for each item in group_list
+        events = item.CONTENT.GetChildElements()
+        for each event in events
+          video = CreateVideoItemByEvent(event)
+          videos.Push(video)
+        next event
+        skipitem:
+            print "skipped item"
+    next
+    return videos
+end function
+
+function CreateVideoItemByEvent(event As Object) As Object
     video = CreateObject("roAssociativeArray")
     video.sdPosterURL = event.CONFIGURATION.THUMB.GetText()
     video.hdPosterURL = event.CONFIGURATION.THUMB.GetText()
@@ -78,18 +84,4 @@ Function CreateVideoItemByEvent(event As Object) As Object
     video.shortDescriptionLine1 = event.CONFIGURATION.TITLE.GetText()
     video.shortDescriptionLine2 = event.CONFIGURATION.DESCRIPTION.GetText()
     return video
-End Function
-
-Function parse_api(xml As Object, videos As Object) As Void
-    groups = xml.GetChildElements()[1].GetChildElements()[0].GetChildElements()[1]
-    group_list = GetXMLElementsByName(groups, "GROUP")
-    for each item in group_list
-        events = item.CONTENT.GetChildElements()
-        for each event in events
-          video = CreateVideoItemByEvent(event)
-          videos.Push(video)
-        next event
-        skipitem:
-            print "skipped item"
-    next
-End Function
+end function

@@ -28,20 +28,17 @@
 '** SUCH DAMAGE.
 '******************************************************************************
 
-Function preShowHomeScreen(breadA=invalid, breadB=invalid) As Object
+function preShowHomeScreen(breadA=invalid, breadB=invalid) As Object
     port = CreateObject("roMessagePort")
     screen = CreateObject("roPosterScreen")
     screen.SetMessagePort(port)
-    if breadA <> invalid and breadB <> invalid then
-        screen.SetBreadcrumbText(breadA, breadB)
-    end if
     screen.SetListStyle("arced-16x9")
     screen.setAdDisplayMode("scale-to-fit")
     screen.showMessage("")
     return screen
-End Function
+end function
 
-Function showHomeScreen(screen) As Integer
+function showHomeScreen(screen) As Integer
     video_list = getVideoList()
     screen.SetContentList(video_list)
     screen.Show()
@@ -49,22 +46,19 @@ Function showHomeScreen(screen) As Integer
         msg = wait(0, screen.GetMessagePort())
         if type(msg) = "roPosterScreenEvent" then
             print "showHomeScreen | msg = "; msg.GetMessage() " | index = "; msg.GetIndex()
-            if msg.isListFocused() then
-                print "list focused | index = "; msg.GetIndex(); " | category = "; m.curCategory
-            else if msg.isListItemSelected() then
+            if msg.isListItemSelected() then
                 print "list item selected | index = "; msg.GetIndex()
-                print video_list[msg.GetIndex()].Title
-                showLiveScreen(video_list[msg.GetIndex()])
+                showVideoDetailScreen(video_list[msg.GetIndex()])
             else if msg.isScreenClosed() then
                 return -1
             end if
         end If
     end while
     return 0
-End Function
+end function
 
-Function getVideoList() As Object
+function getVideoList() As Object
     conn = LoadContentAPI()
     video_list = conn.LoadAPI(conn)
     return video_list
-End Function
+end function
