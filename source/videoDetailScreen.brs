@@ -29,22 +29,25 @@
 '******************************************************************************
 
 function showVideoDetailScreen(content as object) As Boolean
-    port = CreateObject("roMessagePort")
+    port=CreateObject("roMessagePort")
     screen = CreateObject("roSpringboardScreen")
+    screen.SetDescriptionStyle("video") 
+    screen.SetMessagePort(port)
+
     preroll = {
         streamFormat: "mp4"
         stream: {
           url:  "http://stream-hlg03.terra.com.br/intel5s.mp4"
         }
     }
-    screen.SetMessagePort(port)
-    screen.AllowUpdates(false)
+
     screen.ClearButtons()
     screen.AddButton(1,"Assistir")
-    screen.AddButton(3,"Voltar")
+    screen.AddButton(2,"Voltar")
     screen.SetStaticRatingEnabled(false)
     screen.SetPosterStyle("rounded-rect-16x9-generic")
     screen.AllowUpdates(true)
+    screen.SetContent(content)
     screen.Show()
     downKey=3
     selectKey=6
@@ -65,7 +68,7 @@ function showVideoDetailScreen(content as object) As Boolean
                     end if
                     canvas.Close()
                 endif
-                if msg.GetIndex() = 3
+                if msg.GetIndex() = 2
                     return true
                 endif
             else
