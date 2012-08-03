@@ -30,12 +30,7 @@
 
 function Main() as void
     initTheme()
-    screen = preShowHomeScreen("", "")
-    if screen=invalid then
-        print "unexpected error in preShowHomeScreen."
-        return
-    end if
-    showHomeScreen(screen)
+    showHomeScreen()
 end function
 
 function initTheme() as void

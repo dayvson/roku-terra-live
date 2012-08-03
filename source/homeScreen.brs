@@ -28,22 +28,39 @@
 '** SUCH DAMAGE.
 '******************************************************************************
 
-function preShowHomeScreen(breadA=invalid, breadB=invalid) As Object
+function showHomeScreen() As Integer
     port = CreateObject("roMessagePort")
     screen = CreateObject("roPosterScreen")
     screen.SetMessagePort(port)
     screen.SetListStyle("arced-16x9")
     screen.setAdDisplayMode("scale-to-fit")
-    screen.showMessage("")
-    return screen
-end function
-
-function showHomeScreen(screen) As Integer
+    tt=CreateObject("roScreen") 
+    
+    font_registery = CreateObject("roFontRegistry")
+    font_regular = font_registery.GetDefaultFont() 
+    tt.DrawText("Line One String", 150, 300, &h0000FFFF, font_regular)
+    
     video_list = getVideoList()
     screen.SetContentList(video_list)
     screen.Show()
+    if video_list.Count() > 3 then
+        screen.SetFocusedListItem(3)
+    end if
+    timer=createobject("rotimespan")
+    timer.mark()
+    refreshTime = 30000
+    currentTime = 0
+  
     while true
-        msg = wait(0, screen.GetMessagePort())
+        msg = wait(20, screen.GetMessagePort())
+        currentTime = currentTime + timer.totalmilliseconds()
+        timer.mark()
+        if currentTime > refreshTime then
+          currentTime = 0
+          video_list = getVideoList()
+          updateScreen(screen, video_list)
+        end if
+        
         if type(msg) = "roPosterScreenEvent" then
             print "showHomeScreen | msg = "; msg.GetMessage() " | index = "; msg.GetIndex()
             if msg.isListItemSelected() then
@@ -57,6 +74,16 @@ function showHomeScreen(screen) As Integer
     return 0
 end function
 
+function updateScreen(screen As Object, video_list as Object) As Void
+  dialog = CreateObject("roOneLineDialog")
+  dialog.SetTitle("Loading Events....")
+  dialog.ShowBusyAnimation()
+  dialog.Show()
+  Sleep(2000)
+  dialog.Close()
+  screen.SetContentList(video_list)
+  screen.Show()
+end function
 function getVideoList() As Object
     conn = LoadContentAPI()
     video_list = conn.LoadAPI(conn)
