@@ -27,10 +27,11 @@
 '******************************************************************************
 
 function LoadContentAPI() As Object
-    conn = CreateObject("roAssociativeArray")
-    conn.urlAPI  = "http://p1.trrsf.com.br/contentAPI/get?prd=live_guadalajara&srv=getListTickerElements&navigation_code=home&country_code=br&contentType=xml&status=2&eventType=1"
-    conn.LoadAPI    = load_api
-    conn.GetEvents   = getEvents
+    conn = {
+      urlAPI: "http://p1.trrsf.com.br/contentAPI/get?prd=live_guadalajara&srv=getListTickerElements&navigation_code=home&country_code=br&contentType=xml&status=2&eventType=1"
+      LoadAPI: load_api
+      GetEvents: getEvents
+    }
     print "created api connection for " + conn.urlAPI
     return conn
 end function
@@ -69,19 +70,20 @@ function getEvents(xml As Object) As Object
 end function
 
 function CreateVideoItemByEvent(event As Object) As Object
-    video = CreateObject("roAssociativeArray")
-    video.sdPosterURL = event.CONFIGURATION.THUMB.GetText()
-    video.hdPosterURL = event.CONFIGURATION.THUMB.GetText()
-    video.contentId = event.CONFIGURATION@ID
-    video.title = event.CONFIGURATION.TITLE.GetText()
-    video.description = event.COVERAGE.GetText() + " :: " + event.CONFIGURATION.DESCRIPTION.GetText()
-    video.country = event.CONFIGURATION.TITLE.GetText()
-    video.streamFormat = "hls"
-    video.stream = {
+    this = {
+      sdPosterURL: event.CONFIGURATION.THUMB.GetText()
+      hdPosterURL: event.CONFIGURATION.THUMB.GetText()
+      contentId: event.CONFIGURATION@ID
+      title: event.CONFIGURATION.TITLE.GetText()
+      description: event.COVERAGE.GetText() + " :: " + event.CONFIGURATION.DESCRIPTION.GetText()
+      country: event.CONFIGURATION.TITLE.GetText()
+      streamFormat: "hls"
+      live: true
+      stream: {
        url: event.CONFIGURATION.LIVETV_HLS_URL.GetText()
+      }
+      shortDescriptionLine1: event.CONFIGURATION.TITLE.GetText()
+      shortDescriptionLine2: event.CONFIGURATION.DESCRIPTION.GetText()
     }
-    video.contentType = "generic"
-    video.shortDescriptionLine1 = event.CONFIGURATION.TITLE.GetText()
-    video.shortDescriptionLine2 = event.CONFIGURATION.DESCRIPTION.GetText()
-    return video
+    return this
 end function
